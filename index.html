@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Form 22 Builder - Generate and merge Form 22 PDFs from Excel data for Petrol or EV vehicles.">
+  <meta name="author" content="Nandhu">
+  <title>Form 22 PDF Builder</title>
+
+  <!-- ✅ CDN Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Form 22 Builder</h1>
+
+    <label>Select Vehicle Type:</label>
+    <select id="vehicleType">
+      <option value="petrol">Petrol</option>
+      <option value="ev">EV</option>
+    </select>
+
+    <label class="excelFile" for='excelFile'>Upload Excel (.xlsx) File:</label>
+    <input type="file" id="excelFile" accept=".xlsx" />
+
+    <button id="generateBtn">Generate Merged PDF</button>
+
+    <div id="status"></div>
+  </div>
+
+  <!-- JS -->
+  <script src="script.js"></script>
+</body>
+</html>
