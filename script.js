@@ -1,57 +1,29 @@
-/*
-document.getElementById("generateBtn").addEventListener("click", async () => {
-  const fileInput = document.getElementById("excelFile");
-  const vehicleType = document.getElementById("vehicleType").value;
-  const status = document.getElementById("status");
-  
-  if (!fileInput.files.length) {
-    alert("Please upload an Excel file first.");
-    return;
-  }
-  
-  status.textContent = "Reading Excel file...";
-  
-  const file = fileInput.files[0];
-  const data = await file.arrayBuffer();
-  const workbook = XLSX.read(data, { type: "array" });
-  const sheet = workbook.Sheets[workbook.SheetNames[0]];
-  const rows = XLSX.utils.sheet_to_json(sheet);
-  
-  const templateUrl = vehicleType === "ev" ? "form22_ev.pdf" : "form22_petrol.pdf";
-  const templateBytes = await fetch(templateUrl).then(res => res.arrayBuffer());
-  
-  const mergedPdf = await PDFLib.PDFDocument.create();
-  
-  let index = 0;
-  for (const row of rows) {
-    index++;
-    status.textContent = `Processing record ${index} of ${rows.length}...`;
-    
-    const pdf = await PDFLib.PDFDocument.load(templateBytes);
-    const page = pdf.getPages()[0];
-    const { height } = page.getSize();
-    
-    const font = await pdf.embedFont(PDFLib.StandardFonts.Helvetica);
-    const draw = (text, x, y, size = 10) => {
-      page.drawText(String(text || ""), { x, y, size, font, color: PDFLib.rgb(0, 0, 0) });
-    };
-    
-    // 🧾 Adjust coordinates as per your actual PDF layout
-    draw(row.Model, 120, height - 200);
-    draw(row.Chassis, 120, height - 230);
-    draw(row.Engine, 120, height - 260);
-    
-    const [copiedPage] = await mergedPdf.copyPages(pdf, [0]);
-    mergedPdf.addPage(copiedPage);
-  }
-  
-  const mergedBytes = await mergedPdf.save();
-  saveAs(new Blob([mergedBytes], { type: "application/pdf" }), "Merged_Form22.pdf");
-  
-  status.textContent = "✅ PDF Generated Successfully!";
-});
-*/
+// ✅ Exact field coordinates
+const FIELD_COORDINATES = {
+  Model: { x: 370, y: 640, page: 1 },
+  Chassis: { x: 390, y: 615, page: 1 },
+  Engine: { x: 390, y: 600, page: 1 },
+};
+// ===== File name display & reselect feature =====
+const fileInput = document.getElementById("excelFile");
+const fileNameDisplay = document.getElementById("fileName");
 
+fileInput.addEventListener("change", () => {
+  const file = fileInput.files[0];
+  if (file) {
+    fileNameDisplay.textContent = `📄 ${file.name}`;
+    fileNameDisplay.classList.add("file-loaded");
+  } else {
+    fileNameDisplay.textContent = "";
+    fileNameDisplay.classList.remove("file-loaded");
+  }
+});
+
+// When clicking file name, open file chooser again
+fileNameDisplay.addEventListener("click", () => {
+  fileInput.click();
+});
+// ✅ Main generate logic
 document.getElementById("generateBtn").addEventListener("click", async () => {
   const fileInput = document.getElementById("excelFile");
   const vehicleType = document.getElementById("vehicleType").value;
@@ -75,34 +47,62 @@ document.getElementById("generateBtn").addEventListener("click", async () => {
   
   const mergedPdf = await PDFLib.PDFDocument.create();
   
-  // Define exact relative positions as a fraction of page height
-  const fields = [
-    { key: "Model", relY: 0.85 }, // 85% from bottom
-    { key: "Chassis", relY: 0.80 }, // 80% from bottom
-    { key: "Engine", relY: 0.75 } // 75% from bottom
-  ];
-  
   let index = 0;
   for (const row of rows) {
     index++;
     status.textContent = `Processing record ${index} of ${rows.length}...`;
     
     const pdf = await PDFLib.PDFDocument.load(templateBytes);
-    const page = pdf.getPages()[0];
+    const page = pdf.getPage(FIELD_COORDINATES.Model.page - 1); // get correct page
     const { height } = page.getSize();
     
     const font = await pdf.embedFont(PDFLib.StandardFonts.Helvetica);
-    const draw = (text, x, y, size = 10) => {
-      page.drawText(String(text || ""), { x, y, size, font, color: PDFLib.rgb(0, 0, 0) });
+    /*
+     const draw = (text, fieldKey, size = 10) => {
+       const coords = FIELD_COORDINATES[fieldKey];
+       if (!coords) return;
+       page.drawText(String(text || ""), {
+         x: coords.x,
+         y: coords.y,
+         size,
+         font,
+         color: PDFLib.rgb(0, 0, 0),
+       });
+       console.log(`${fieldKey} → x:${coords.x}, y:${coords.y}`);
+     };
+     */
+    const draw = (text, fieldKey, size = 10, padding = 2, bgColor = PDFLib.rgb(1, 1, 1)) => {
+      const coords = FIELD_COORDINATES[fieldKey];
+      if (!coords) return;
+      
+      const content = String(text || "");
+      const textWidth = font.widthOfTextAtSize(content, size);
+      const textHeight = size; // approx. height of the text line
+      
+      // Draw background rectangle (white box)
+      page.drawRectangle({
+        x: coords.x - padding,
+        y: coords.y - padding,
+        width: textWidth + padding * 2,
+        height: textHeight + padding * 1.5, // add slight vertical padding
+        color: bgColor,
+      });
+      
+      // Draw text on top
+      page.drawText(content, {
+        x: coords.x,
+        y: coords.y,
+        size,
+        font,
+        color: PDFLib.rgb(0, 0, 0),
+      });
+      
+      console.log(`${fieldKey} drawn with background → x:${coords.x}, y:${coords.y}`);
     };
-    
-    // Draw fields with exact coordinates
-    fields.forEach(field => {
-      const x = 120; // fixed horizontal position
-      const y = height * field.relY; // dynamic vertical position
-      draw(row[field.key], x, y);
-      console.log(`${field.key} coordinates → x: ${x}, y: ${y}`);
-    });
+    // ✅ Draw using exact coordinates
+    draw(row.Model, "Model");
+    draw(row.Chassis || row.Chasis, "Chassis"); // handle Excel typo
+    draw(row.Engine, "Engine");
     
     const [copiedPage] = await mergedPdf.copyPages(pdf, [0]);
     mergedPdf.addPage(copiedPage);

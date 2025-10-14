@@ -56,7 +56,7 @@ select,
   display: none;
 }
 
-#generateBtn {
+#generateBtn,a {
   width: 100%;
   background: var(--primary-color);
   color: white;
@@ -68,7 +68,12 @@ select,
   margin-top: 2rem;
   padding: 1rem 1rem;
 }
-
+a{
+  display: block;
+  margin: 3rem auto;
+  width: max-content;
+  text-decoration: none;
+}
 button:hover {
   background: var(--primary-hover);
 }
@@ -78,6 +83,25 @@ button:hover {
   text-align: center;
   font-weight: bold;
   color: var(--text-color);
+}
+#fileName {
+  margin-top: 2rem;
+  text-align: center;
+  font-weight: 600;
+  color: var(--primary-color);
+  cursor: pointer;
+  word-break: break-all;
+  display: none;
+}
+
+#fileName.file-loaded {
+  display: block;
+  transition: 0.3s;
+}
+
+#fileName:hover {
+  text-decoration: underline;
+  color: var(--primary-hover);
 }
 
 /* ===== Mobile Responsiveness ===== */
