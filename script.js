@@ -4,6 +4,8 @@ const FIELD_COORDINATES = {
   Chassis: { x: 390, y: 615, page: 1 },
   Engine: { x: 390, y: 600, page: 1 },
 };
+
+
 // ===== File name display & reselect feature =====
 const fileInput = document.getElementById("excelFile");
 const fileNameDisplay = document.getElementById("fileName");
@@ -16,6 +18,33 @@ fileInput.addEventListener("change", () => {
   } else {
     fileNameDisplay.textContent = "";
     fileNameDisplay.classList.remove("file-loaded");
+  }
+});
+// dropzone
+const dropZone = document.getElementById("dropZone");
+
+// Highlight on drag over
+dropZone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  dropZone.classList.add("dragover");
+});
+
+// Remove highlight on drag leave
+dropZone.addEventListener("dragleave", () => {
+  dropZone.classList.remove("dragover");
+});
+
+// Handle file drop
+dropZone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dropZone.classList.remove("dragover");
+  
+  const files = e.dataTransfer.files;
+  if (files.length > 0 && files[0].name.endsWith(".xlsx")) {
+    fileInput.files = files; // Assign dropped file to input
+    alert(`File "${files[0].name}" selected successfully!`);
+  } else {
+    alert("Please drop a valid .xlsx file.");
   }
 });
 

@@ -58,6 +58,8 @@ select,
   text-align: center;
   width: auto;
   color: var(--primary-color);
+  border: 1px dashed var(--primary-color);
+  padding: 7rem 1rem;
 }
 
 #excelFile {
