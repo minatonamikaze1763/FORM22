@@ -42,10 +42,14 @@ dropZone.addEventListener("drop", (e) => {
   const files = e.dataTransfer.files;
   if (files.length > 0 && files[0].name.endsWith(".xlsx")) {
     fileInput.files = files; // Assign dropped file to input
-    alert(`File "${files[0].name}" selected successfully!`);
+    fileNameDisplay.textContent = `${files[0].name}`;
+    fileNameDisplay.classList.add("file-loaded");
   } else {
+    fileNameDisplay.textContent = "";
+    fileNameDisplay.classList.remove("file-loaded");
     alert("Please drop a valid .xlsx file.");
   }
+  
 });
 
 // When clicking file name, open file chooser again
