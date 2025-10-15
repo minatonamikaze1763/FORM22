@@ -25,14 +25,17 @@ body {
   padding: 30px;
 }
 
-h1 {
+h1 ,h2{
   text-align: center;
   color: var(--heading-color);
   font-size: 24px;
+  margin-bottom: 2rem;
+}
+p{
+  line-height: 1.8rem;
 }
 
 label {
-  margin-top: 10px;
   font-weight: bold;
   display: block;
 }
@@ -41,15 +44,20 @@ select,
 .excelFile {
   width: 100%;
   padding: 10px 0;
+  padding: 1rem 10px;
   margin-top: 1rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--primary-color);
   border-radius: 6px;
   font-size: 16px;
 }
-
+#vehicleType{
+  padding: 1rem 10px;
+  background: var(--background-color);
+}
 .excelFile {
+  text-align: center;
   width: auto;
-  padding: 10px;
+  color: var(--primary-color);
 }
 
 #excelFile {
