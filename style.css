@@ -61,8 +61,13 @@ select,
   border: 1px dashed var(--primary-color);
   padding: 7rem 1rem;
   cursor: pointer;
-}
+  transition: 0.3s;
 
+}
+.excelFile:hover {
+  background:  #2563EB45;
+  scale: 1.05;
+}
 #excelFile {
   display: none;
 }
@@ -85,8 +90,10 @@ a{
   width: max-content;
   text-decoration: none;
 }
-button:hover {
+#generateBtn:hover ,
+.download-link:hover{
   background: var(--primary-hover);
+  scale: 1.04;
 }
 
 #status {
